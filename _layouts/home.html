@@ -9,8 +9,10 @@ layout: default
     {{ content }}
   </div>
   <div class="intro__meta">
-    <span>{{ site.posts.size }} {%- if site.posts.size == 1 %} disclosure on record{%- else %} disclosures on record{%- endif -%}</span>
-    <span>Since {{ site.posts | last | map: 'date' | first | date: '%Y' | default: site.posts.last.date | date: '%Y' }}</span>
+    {%- assign total = site.posts.size -%}
+    {%- assign oldest = site.posts.last -%}
+    <span>{{ total }} {% if total == 1 %}disclosure on record{% else %}disclosures on record{% endif %}</span>
+    {%- if oldest -%}<span>Since {{ oldest.date | date: '%Y' }}</span>{%- endif -%}
     <a href="mailto:{{ site.email }}">{{ site.email }}</a>
   </div>
 </section>
