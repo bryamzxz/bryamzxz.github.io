@@ -1,0 +1,38 @@
+title: bryamzxz
+description: >-
+  Security research and disclosure notes. Bug bounty against Colombian state
+  infrastructure and forensics work with civic-tech partners.
+author:
+  name: Bryam Vargas
+  email: bryamestebanvargas@gmail.com
+url: "https://bryamzxz.github.io"
+baseurl: ""
+
+# Build
+theme: minima
+markdown: kramdown
+highlighter: rouge
+permalink: /:year/:month/:day/:title/
+
+# Minima theme settings
+minima:
+  skin: dark
+  social_links:
+    - { platform: github, user_url: "https://github.com/bryamzxz" }
+
+# Jekyll defaults
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# Don't include these in the build
+exclude:
+  - README.md
+  - .gitignore
