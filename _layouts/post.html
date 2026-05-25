@@ -5,7 +5,7 @@ layout: default
 <article class="post">
 
   <header class="post-header">
-    <p class="post-header__kicker">{% if page.categories %}{{ page.categories | first | upcase }} · {% endif %}filed under disclosure</p>
+    <p class="post-header__kicker">{% if page.categories %}{{ page.categories | first | upcase }}{% else %}DISCLOSURE{% endif %} · {{ page.date | date: '%Y-%m-%d' }}</p>
     <h1 class="post-header__title">{{ page.title | escape }}</h1>
   </header>
 
