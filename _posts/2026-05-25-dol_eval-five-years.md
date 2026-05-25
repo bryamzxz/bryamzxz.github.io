@@ -8,16 +8,6 @@ author: "Bryam Vargas (bryamzxz)"
 description: "Three remote-code-execution CVEs in Dolibarr ERP/CRM rooted in dol_eval() and call_user_func_array(), and the five-year pattern of partial patches that left the primitive reachable."
 ---
 
----
-layout: post
-title: "Five Years of dol_eval: Pattern Persistence in Dolibarr ERP/CRM Security"
-date: 2026-05-25
-author: Bryam Vargas
-tags: [security, php, dolibarr, cve, disclosure]
----
-
-# Five Years of `dol_eval`: Pattern Persistence in Dolibarr ERP/CRM Security
-
 **Author:** Bryam Vargas (`@bryamzxz`) — Bogotá, Colombia
 **Disclosure date:** May 25, 2026
 **CVE-IDs:** CVE-2026-37711, CVE-2026-37712, CVE-2026-37713 (assigned by MITRE Primary, April 10, 2026)
