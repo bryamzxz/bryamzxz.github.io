@@ -1,0 +1,55 @@
+---
+layout: default
+---
+
+<section class="intro">
+  <p class="intro__kicker">Independent security research · Bogotá</p>
+  <h1 class="intro__title">{{ site.title }}<em>.</em></h1>
+  <div class="intro__lede">
+    {{ content }}
+  </div>
+  <div class="intro__meta">
+    <span>{{ site.posts.size }} {%- if site.posts.size == 1 %} disclosure on record{%- else %} disclosures on record{%- endif -%}</span>
+    <span>Since {{ site.posts | last | map: 'date' | first | date: '%Y' | default: site.posts.last.date | date: '%Y' }}</span>
+    <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+  </div>
+</section>
+
+<div class="section-bar">
+  <h2>Disclosures</h2>
+  <span class="section-bar__aside">most recent first</span>
+</div>
+
+<ol class="post-list" reversed>
+  {%- assign total = site.posts.size -%}
+  {%- for post in site.posts -%}
+    {%- assign num_raw = total | minus: forloop.index | plus: 1 -%}
+    {%- assign num_str = num_raw | prepend: '000' -%}
+    {%- assign num_str = num_str | slice: -3, 3 -%}
+    <li class="post-list__item">
+      <div class="post-list__num">{{ num_str }}</div>
+      <div class="post-list__main">
+        <time class="post-list__date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%d %b %Y' | upcase }}</time>
+        <h3 class="post-list__title"><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
+        {%- if post.description -%}
+          <p class="post-list__desc">{{ post.description | strip_html | strip_newlines | truncate: 240 }}</p>
+        {%- endif -%}
+        {%- if post.cves -%}
+          <div class="post-list__chips">
+            {%- for cve in post.cves -%}
+              <span class="chip">{{ cve }}</span>
+            {%- endfor -%}
+            {%- if post.cvss -%}
+              {%- assign top = post.cvss | sort | last -%}
+              {%- assign sev_class = 'chip' -%}
+              {%- if top >= 9.0 -%}{%- assign sev_class = 'chip chip--accent' -%}
+              {%- elsif top >= 7.0 -%}{%- assign sev_class = 'chip chip--fg' -%}
+              {%- endif -%}
+              <span class="{{ sev_class }}">CVSS {{ top }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </li>
+  {%- endfor -%}
+</ol>

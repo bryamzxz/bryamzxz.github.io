@@ -1,0 +1,73 @@
+---
+layout: default
+---
+
+<article class="post">
+
+  <header class="post-header">
+    <p class="post-header__kicker">{% if page.categories %}{{ page.categories | first | upcase }} · {% endif %}filed under disclosure</p>
+    <h1 class="post-header__title">{{ page.title | escape }}</h1>
+  </header>
+
+  <section class="stamp" aria-label="Disclosure dossier">
+    <div class="stamp__label">Filed by</div>
+    <div class="stamp__value">{{ page.author | default: site.author }}</div>
+
+    <div class="stamp__label">Date</div>
+    <div class="stamp__value">
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: '%d %B %Y' }}</time>
+    </div>
+
+    {%- if page.cves -%}
+    <div class="stamp__label">CVE IDs</div>
+    <div class="stamp__value">
+      <ul>
+        {%- for cve in page.cves -%}<li>{{ cve }}</li>{%- endfor -%}
+      </ul>
+    </div>
+    {%- endif -%}
+
+    {%- if page.cvss -%}
+    <div class="stamp__label">CVSS 3.1</div>
+    <div class="stamp__value">
+      <div class="stamp__severities">
+        {%- for score in page.cvss -%}
+          {%- assign sev_class = 'sev' -%}
+          {%- if score >= 9.0 -%}{%- assign sev_class = 'sev sev--critical' -%}
+          {%- elsif score >= 7.0 -%}{%- assign sev_class = 'sev sev--high' -%}
+          {%- elsif score >= 4.0 -%}{%- assign sev_class = 'sev sev--medium' -%}
+          {%- else -%}{%- assign sev_class = 'sev sev--low' -%}
+          {%- endif -%}
+          <span class="{{ sev_class }}">{{ score }}</span>
+        {%- endfor -%}
+      </div>
+    </div>
+    {%- endif -%}
+
+    {%- if page.cwe -%}
+    <div class="stamp__label">CWE</div>
+    <div class="stamp__value">{{ page.cwe | join: ' · ' }}</div>
+    {%- endif -%}
+
+    {%- if page.affected -%}
+    <div class="stamp__label">Affected</div>
+    <div class="stamp__value">{{ page.affected }}</div>
+    {%- endif -%}
+
+    {%- if page.vendor_response -%}
+    <div class="stamp__label">Vendor</div>
+    <div class="stamp__value">{{ page.vendor_response }}</div>
+    {%- endif -%}
+  </section>
+
+  <div class="post-body prose">
+    {{ content }}
+  </div>
+
+  <footer class="post-foot">
+    <span>Filed by {{ page.author | default: site.author }} · Bogotá</span>
+    <span>{{ page.date | date: '%Y-%m-%d' }}</span>
+    <a href="{{ '/' | relative_url }}">← back to index</a>
+  </footer>
+
+</article>

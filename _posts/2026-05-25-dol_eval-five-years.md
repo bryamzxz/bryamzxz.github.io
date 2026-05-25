@@ -1,17 +1,25 @@
 ---
 layout: post
-title: "Dolibarr dol_eval(): Five Years of Partial Patches (CVE-2026-37711 / 37712 / 37713)"
+title: "Dolibarr dol_eval(): Five Years of Partial Patches"
 date: 2026-05-25 00:00:00 -0500
-categories: [security, disclosure]
+categories: [disclosure]
 tags: [dolibarr, cve, rce, dol_eval, code-injection]
-author: "Bryam Vargas (bryamzxz)"
+author: "Bryam Vargas"
 description: "Three remote-code-execution CVEs in Dolibarr ERP/CRM rooted in dol_eval() and call_user_func_array(), and the five-year pattern of partial patches that left the primitive reachable."
----
-
-**Author:** Bryam Vargas (`@bryamzxz`) — Bogotá, Colombia
-**Disclosure date:** May 25, 2026
-**CVE-IDs:** CVE-2026-37711, CVE-2026-37712, CVE-2026-37713 (assigned by MITRE Primary, April 10, 2026)
-
+cves:
+  - CVE-2026-37711
+  - CVE-2026-37712
+  - CVE-2026-37713
+cvss:
+  - 9.1
+  - 9.1
+  - 8.1
+cwe:
+  - CWE-94
+  - CWE-78
+  - CWE-95
+affected: "Dolibarr v22.0.0 – v22.0.4 · v24.0.0-alpha"
+vendor_response: "Advisories closed without technical refutation; reporter blacklisted"
 ---
 
 ## Abstract
