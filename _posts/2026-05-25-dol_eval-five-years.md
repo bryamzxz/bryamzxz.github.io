@@ -468,9 +468,9 @@ The OpenSSF Vulnerability Disclosures Working Group and other CVD-norm bodies ar
 
 ## 7. References
 
-- `GHSA-grw9-6m4w-mhcq` — CVE-2026-37711 *(reporter-side mirror filing pending; upstream GHSA closed without technical refutation)*
-- `GHSA-c2jp-w9cj-6cx4` — CVE-2026-37712 *(reporter-side mirror filing pending; upstream GHSA closed without technical refutation)*
-- `GHSA-cq92-jp5j-rwvj` — CVE-2026-37713 *(reporter-side mirror filing pending; upstream GHSA closed without technical refutation)*
+- `GHSA-grw9-6m4w-mhcq` — CVE-2026-37711 *(advisory opened in the Dolibarr repository; closed by the maintainer without publication or technical refutation — the identifier does not resolve publicly. Full technical detail in §3.1.)*
+- `GHSA-c2jp-w9cj-6cx4` — CVE-2026-37712 *(advisory opened in the Dolibarr repository; closed by the maintainer without publication or technical refutation — the identifier does not resolve publicly. Full technical detail in §3.2.)*
+- `GHSA-cq92-jp5j-rwvj` — CVE-2026-37713 *(advisory opened in the Dolibarr repository; closed by the maintainer without publication or technical refutation — the identifier does not resolve publicly. Full technical detail in §3.3.)*
 - CVE-2025-56588 — 2025 `dol_eval` hardening: central `$forbiddenphpfunctions` blacklist expansion (commit `b03f30c7e`)
 - CVE-2026-22666 — Jiva Security, *Breaking the Eval Cage* (April 2026) — independent `dol_eval_standard()` whitelist-bypass analysis (CNA: VulnCheck; fixed in 23.0.2)
 - CVE-2025-67486 — Abduxalilov (April 2026) — independent extrafield `dol_eval()` injection; pins central `dol_eval_*` helpers with an active user-creation trigger. **Distinct from CVE-2026-37713**: that record pins four `commonobject.class.php` consumer sinks reached through a passive extrafield render. Listed for completeness; the two records cover non-overlapping reachability surfaces of the same dynamic-evaluation primitive.
