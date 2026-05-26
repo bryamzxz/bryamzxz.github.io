@@ -5,7 +5,7 @@ date: 2026-05-25 00:00:00 -0500
 categories: [disclosure]
 tags: [dolibarr, cve, rce, dol_eval, code-injection]
 author: "Bryam Vargas"
-description: "Three high-severity code-execution CVEs in Dolibarr ERP/CRM — two remote code execution findings via dol_eval() and call_user_func_array(), plus an arbitrary-PHP-execution primitive (CWE-95) — and the five-year pattern of partial patches that left the eval() primitive reachable."
+description: "Three high-severity vulnerabilities in Dolibarr ERP/CRM — a dol_eval() PHP code injection (CWE-94), an OS command execution via call_user_func_array() in cron (CWE-78), and a passively-triggered eval-injection PHP code execution (CWE-95) — and the five-year pattern of partial patches that left the eval() primitive reachable."
 cves:
   - CVE-2026-37711
   - CVE-2026-37712
@@ -24,7 +24,7 @@ vendor_response: "Advisories closed without technical refutation; reporter black
 
 ## Abstract
 
-This post documents three high-severity code-execution vulnerabilities in Dolibarr ERP/CRM, assigned **CVE-2026-37711**, **CVE-2026-37712**, and **CVE-2026-37713** by the MITRE TL-Root on April 10, 2026. CVE-2026-37711 is a `dol_eval()` code-injection pattern copied unchanged into 31 call sites across 30 files by a single 2025 commit, none of them individually patched since. CVE-2026-37712 is an OS command execution via unrestricted `call_user_func_array()` in the cron scheduler. CVE-2026-37713 is an arbitrary-PHP-execution primitive (CWE-95) reached passively through a stored `dol_eval` chain in the base business object class; OS command execution from 37713 alone is blocked by the function-name deny-list, but chains cleanly with 37712 for OS exec. All three affect stable v22.0.0 through v22.0.4 by default; v24.0-alpha reachability is branch-dependent (per-finding tables in §3).
+This post documents three high-severity vulnerabilities in Dolibarr ERP/CRM — two PHP code-execution primitives via `dol_eval()` (CWE-94 and CWE-95) and one OS command execution via `call_user_func_array()` (CWE-78) — assigned **CVE-2026-37711**, **CVE-2026-37712**, and **CVE-2026-37713** by the MITRE TL-Root on April 10, 2026. Only **CVE-2026-37712** is a direct OS-level RCE; the other two execute attacker-supplied PHP inside `eval()` and reach OS command execution only when chained with 37712. CVE-2026-37711 is a `dol_eval()` code-injection pattern (CWE-94) copied unchanged into 31 call sites across 30 files by a single 2025 commit, none of them individually patched since. CVE-2026-37712 is the OS command execution via unrestricted `call_user_func_array()` in the cron scheduler. CVE-2026-37713 is an arbitrary-PHP-execution primitive (CWE-95) reached passively through a stored `dol_eval` chain in the base business object class; OS command execution from 37713 alone is blocked by the function-name deny-list, but chains cleanly with 37712 for OS exec. All three affect stable v22.0.0 through v22.0.4 by default; v24.0-alpha reachability is branch-dependent (per-finding tables in §3).
 
 The wider context is a five-year pattern of `dol_eval`-related CVEs in Dolibarr (2022–2026), each addressed through blacklist expansion rather than architectural change. This post documents the three new findings, the audit methodology, and the broader pattern.
 
