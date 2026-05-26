@@ -18,13 +18,13 @@ cwe:
   - CWE-94
   - CWE-78
   - CWE-95
-affected: "Dolibarr v22.0.0 – v22.0.4 · v24.0.0-alpha"
+affected: "Dolibarr v22.0.0 – v22.0.4 (default install). v24.0-alpha conditional — see per-finding tables"
 vendor_response: "Advisories closed without technical refutation; reporter blacklisted"
 ---
 
 ## Abstract
 
-This post documents three Remote Code Execution vulnerabilities in Dolibarr ERP/CRM, assigned **CVE-2026-37711**, **CVE-2026-37712**, and **CVE-2026-37713** by the MITRE TL-Root on April 10, 2026. The first finding is a `dol_eval()` code-injection pattern copied unchanged into 31 call sites across 30 files by a single 2025 commit, none of them individually patched since. Together with two additional findings — an unrestricted `call_user_func_array` in the cron scheduler and a passively-triggered `dol_eval` chain in the base business object class — these vulnerabilities affect all stable releases (v22.0.0 through v22.0.4) and the development branch (v24.0.0-alpha).
+This post documents three high-severity code-execution vulnerabilities in Dolibarr ERP/CRM, assigned **CVE-2026-37711**, **CVE-2026-37712**, and **CVE-2026-37713** by the MITRE TL-Root on April 10, 2026. CVE-2026-37711 is a `dol_eval()` code-injection pattern copied unchanged into 31 call sites across 30 files by a single 2025 commit, none of them individually patched since. CVE-2026-37712 is an OS command execution via unrestricted `call_user_func_array()` in the cron scheduler. CVE-2026-37713 is an arbitrary-PHP-execution primitive (CWE-95) reached passively through a stored `dol_eval` chain in the base business object class; OS command execution from 37713 alone is blocked by the function-name deny-list, but chains cleanly with 37712 for OS exec. All three affect stable v22.0.0 through v22.0.4 by default; v24.0-alpha reachability is branch-dependent (per-finding tables in §3).
 
 The wider context is a five-year pattern of `dol_eval`-related CVEs in Dolibarr (2022–2026), each addressed through blacklist expansion rather than architectural change. This post documents the three new findings, the audit methodology, and the broader pattern.
 
@@ -94,7 +94,9 @@ For findings derived from amplifier files (e.g., `actions_addupdatedelete.inc.ph
 
 ### 2.3 Lab environment
 
-All findings were reproduced on:
+Two labs were used across the engagement; both are documented in
+Appendix A. Initial discovery and the §3.1 / §3.2 PoCs ran in the
+**February–March 2026 lab**:
 
 - Dolibarr 24.0.0-alpha (commit `ff146c4713`, the latest develop branch as of February 2026)
 - Also confirmed on stable v22.0.0 through v22.0.4
@@ -102,7 +104,18 @@ All findings were reproduced on:
 - PHP 8.3.6, Apache 2.4.58, MariaDB 11.4
 - Burp Suite for HTTP capture
 
-Container isolation ensured that no test touched any production system. Network-isolated for fuzzing where applicable.
+The §3.3 PoC was rebuilt for the published version in the **May 2026
+lab** after a post-publication review identified that the original
+§3.3 demonstration material was a CLI simulation of `eval()` rather
+than the full filter pipeline:
+
+- Dolibarr v22.0.4 (release tag; `DOL_VERSION = '22.0.4'`)
+- Debian 13.5
+- PHP 8.3.31 (Ondrej Sury build for Debian trixie — same 8.3 series as the original lab)
+- Apache 2.4.67, MariaDB 11.8.6
+- `curl -isS` for HTTP capture
+
+Container/VM isolation ensured that no test touched any production system. Network-isolated for fuzzing where applicable.
 
 ### 2.4 Methodology transparency
 
@@ -326,7 +339,7 @@ The block runs inside `fetch_optionals()`, `insertExtraFields()`, `updateExtraFi
 | `compta/facture/class/facture.class.php` | 2645 | Any invoice line fetch |
 | `compta/facture/class/factureligne.class.php` | 366 | Any invoice line fetch |
 | `core/tpl/extrafields_list_print_fields.tpl.php` | 78 | Any list page |
-| `webportal/class/html.formwebportal.class.php` | 856 | Webportal (potentially unauthenticated) |
+| `webportal/class/html.formwebportal.class.php` | 856 | Webportal rendering (auth context depends on webportal config; **unverified** — flagged for follow-up) |
 
 #### Proof of concept
 
@@ -459,6 +472,8 @@ While patches are pending:
 
 ## Appendix A — Lab environment
 
+**Lab 1 — Feb–Mar 2026 (initial discovery; PoCs for §3.1 + §3.2)**
+
 | Component | Version |
 |---|---|
 | Dolibarr | 24.0.0-alpha (commit `ff146c4713`); also confirmed on v22.0.0 – v22.0.4 |
@@ -467,6 +482,17 @@ While patches are pending:
 | Web server | Apache 2.4.58 |
 | Database | MariaDB 11.4 |
 | HTTP capture | Burp Suite Professional |
+
+**Lab 2 — May 2026 (post-publication §3.3 rebuild)**
+
+| Component | Version |
+|---|---|
+| Dolibarr | v22.0.4 (release tag; `DOL_VERSION` constant verified) |
+| OS | Debian 13.5 (KVM/QEMU VM) |
+| PHP | 8.3.31 (Ondrej Sury / `packages.sury.org` for trixie) |
+| Web server | Apache 2.4.67 |
+| Database | MariaDB 11.8.6 |
+| HTTP capture | `curl -isS` |
 
 ## Appendix B — Per-finding audit material
 
