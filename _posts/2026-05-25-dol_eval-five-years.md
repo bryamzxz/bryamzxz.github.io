@@ -408,17 +408,6 @@ While patches are pending:
 - Audit `llx_cronjob` rows where `jobtype = 'function'` for unexpected `methodename` values (e.g., `system`, `exec`, `passthru`, `shell_exec`).
 - Where feasible, run Apache as a non-`root` user. CVE-2026-37713 in particular escalates to system compromise when the web server runs as `root`.
 
-### 6.3 For the broader CVD process
-
-This disclosure used three layers of the CVE/CNA chain: GitHub Security Advisory Database (declined assignment), the project's GitHub Security Advisories (closed without technical refutation), and finally MITRE Primary (assigned the CVE-IDs). This three-step path is unusually long for a coordinated disclosure of three confirmed RCE findings and points to a gap in current CVD norms:
-
-- When a project maintainer is the only path to CNA assignment for their project, and the maintainer declines to engage technically, the researcher must escalate to TL-Root. **This worked**, but the path is not well-documented for new researchers and is not consistently applied across CNAs.
-- **Methodology transparency** (cf. §2.4) reduces, but does not eliminate, the maintainer's incentive to dismiss reports as low-quality. A standardized disclosure metadata format (audit trail, reproduction logs, lab parameters) would help.
-
-A further structural factor compounds these gaps: the concentration of roles. In this project, one individual is simultaneously the sole code-merge authority, the author of the `SECURITY.md` that defines which reports are treated as valid, the decision-maker on the project's GitHub Security Advisories — and is publicly listed as the founder and CEO of DoliCloud, the commercial SaaS platform that hosts Dolibarr. This observation is confined to structure and makes no claim about any individual's intent. But when report-validity gatekeeping and the commercial stewardship of a product's reputation rest with the same person, the incentives surrounding vulnerability acknowledgement are not independent, and a coordinated-disclosure process that depends entirely on that person's cooperation has no external check.
-
-The OpenSSF Vulnerability Disclosures Working Group and other CVD-norm bodies are well-placed to address these gaps.
-
 ---
 
 ## 7. References
