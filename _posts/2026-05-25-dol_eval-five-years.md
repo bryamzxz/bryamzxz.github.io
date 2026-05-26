@@ -140,7 +140,7 @@ From a wider set of candidate findings produced during the audit, three were sel
 ### 3.1 CVE-2026-37711 — `dol_eval()` Code Injection via extrafields `perms` (CVSS 9.1)
 
 **Class:** CWE-94 (Code Injection) + CWE-184 (Incomplete List of Disallowed Inputs)
-**Affected:** Dolibarr v22.0.0 – v22.0.4 and v24.0.0-alpha
+**Affected:** Dolibarr v22.0.0 – v22.0.4 (default install). The chain transits `dol_eval()`, so v24.0-alpha reachability requires the same operator override (`$dolibarr_main_restrict_eval_methods = ''`) documented in §3.3's per-branch table.
 **GHSA:** `GHSA-grw9-6m4w-mhcq` *(closed by upstream maintainer; mirror filing pending on reporter's fork)*
 
 #### Description
@@ -207,7 +207,7 @@ Remove the `dol_eval` block entirely from this code path. The `perms` attribute 
 ### 3.2 CVE-2026-37712 — Authenticated RCE via `call_user_func_array` in Cron Jobs (CVSS 9.1)
 
 **Class:** CWE-78 (OS Command Injection)
-**Affected:** Dolibarr v22.0.0 – v22.0.4 and v24.0.0-alpha
+**Affected:** Dolibarr v22.0.0 – v22.0.4 **and** v24.0-alpha by default. Unlike §3.1 / §3.3, this sink does **not** transit `dol_eval()` — the `call_user_func_array` call has no filter wrapper at all, so the post-CVE-2026-22666 whitelist mode does not constrain it.
 **GHSA:** `GHSA-c2jp-w9cj-6cx4` *(closed by upstream maintainer; mirror filing pending on reporter's fork)*
 
 #### Description
