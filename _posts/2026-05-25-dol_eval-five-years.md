@@ -141,7 +141,7 @@ From a wider set of candidate findings produced during the audit, three were sel
 
 **Class:** CWE-94 (Code Injection) + CWE-184 (Incomplete List of Disallowed Inputs)
 **Affected:** Dolibarr v22.0.0 – v22.0.4 (default install). The chain transits `dol_eval()`, so v24.0-alpha reachability requires the same operator override (`$dolibarr_main_restrict_eval_methods = ''`) documented in §3.3's per-branch table.
-**GHSA:** `GHSA-grw9-6m4w-mhcq` *(closed by upstream maintainer; mirror filing pending on reporter's fork)*
+**GHSA:** `GHSA-grw9-6m4w-mhcq` *(advisory opened in the Dolibarr repository; closed by the maintainer without publication or technical refutation — the identifier does not resolve publicly. Full technical detail in §3.1.)*
 
 #### Description
 
@@ -208,7 +208,7 @@ Remove the `dol_eval` block entirely from this code path. The `perms` attribute 
 
 **Class:** CWE-78 (OS Command Injection)
 **Affected:** Dolibarr v22.0.0 – v22.0.4 **and** v24.0-alpha by default. Unlike §3.1 / §3.3, this sink does **not** transit `dol_eval()` — the `call_user_func_array` call has no filter wrapper at all, so the post-CVE-2026-22666 whitelist mode does not constrain it.
-**GHSA:** `GHSA-c2jp-w9cj-6cx4` *(closed by upstream maintainer; mirror filing pending on reporter's fork)*
+**GHSA:** `GHSA-c2jp-w9cj-6cx4` *(advisory opened in the Dolibarr repository; closed by the maintainer without publication or technical refutation — the identifier does not resolve publicly. Full technical detail in §3.2.)*
 
 #### Description
 
@@ -287,7 +287,7 @@ Implement a strict allowlist for `$this->methodename` when `jobtype == 'function
 
 **Class:** CWE-95 (Eval Injection)
 **Affected:** Dolibarr v22.0.0 – v22.0.4 (default install). v24.0-alpha is reachable **only** when `$dolibarr_main_restrict_eval_methods` is manually emptied in `conf.php` — see per-branch table below.
-**GHSA:** `GHSA-cq92-jp5j-rwvj` *(closed by upstream maintainer; mirror filing pending on reporter's fork)*
+**GHSA:** `GHSA-cq92-jp5j-rwvj` *(advisory opened in the Dolibarr repository; closed by the maintainer without publication or technical refutation — the identifier does not resolve publicly. Full technical detail in §3.3.)*
 
 #### Description
 
