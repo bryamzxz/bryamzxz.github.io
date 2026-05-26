@@ -276,21 +276,6 @@ Implement a strict allowlist for `$this->methodename` when `jobtype == 'function
 **Affected:** Dolibarr v22.0.0 – v22.0.4 (default install). v24.0-alpha is reachable **only** when `$dolibarr_main_restrict_eval_methods` is manually emptied in `conf.php` — see per-branch table below.
 **GHSA:** `GHSA-cq92-jp5j-rwvj` *(closed by upstream maintainer; mirror filing pending on reporter's fork)*
 
-> **Revision 2 (2026-05-25, post-publication).** The original §3.3 proof
-> conflated a CLI simulation of `eval()` with the documented HTTP trigger:
-> the literal payload `system("id")` is rejected by `dol_eval_standard()`
-> (`system` is on the function-name deny-list), so the `uid=0(root)`
-> output could not have come from the documented chain. The revised
-> proof below uses a filter-passing payload (`phpversion()`) verified
-> end-to-end against a real Dolibarr v22.0.4 install on PHP 8.3.31 —
-> capture is self-evidencing: the host's actual PHP version appears in
-> the slot of the rendered HTML that can **only** contain
-> `dol_eval`'s return value. The affected-version range has also been
-> corrected: v24.0-alpha runs the post-CVE-2026-22666 whitelist by
-> default and is **not** reachable without an explicit operator
-> override. CVE-2026-37711 (§3.1) and CVE-2026-37712 (§3.2) are
-> unaffected by this revision.
-
 #### Description
 
 Dolibarr evaluates the `fieldcomputed` property of extrafields using `dol_eval()` with `onlysimplestring='2'` (permissive mode) on **every object fetch, insert, update, and display**. An administrator can inject a PHP expression into `llx_extrafields.fieldcomputed` via the extrafield admin UI. Any subsequently authenticated request that loads, creates, or updates a business object of the affected type routes the stored string through `dol_eval_standard()` and into PHP's native `eval()`.
