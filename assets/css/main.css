@@ -299,6 +299,7 @@ main.shell { flex: 1; }
 .intro {
   padding: var(--sp-8) 0 var(--sp-7);
   max-width: var(--col-wide);
+  margin-inline: auto;
 }
 
 .intro__kicker {
@@ -370,8 +371,8 @@ main.shell { flex: 1; }
   justify-content: space-between;
   border-top: 1px solid var(--rule);
   padding-top: var(--sp-3);
-  margin-top: var(--sp-7);
-  margin-bottom: var(--sp-2);
+  margin: var(--sp-7) auto var(--sp-2);
+  max-width: var(--col-wide);
   font-family: var(--mono);
   font-size: var(--fs-2xs);
   text-transform: uppercase;
@@ -387,7 +388,7 @@ main.shell { flex: 1; }
 }
 .section-bar__aside { color: var(--fg-muted); }
 
-.post-list { list-style: none; padding: 0; margin: 0; }
+.post-list { list-style: none; padding: 0; margin: 0 auto; max-width: var(--col-wide); }
 .post-list__item {
   border-top: 1px solid var(--rule-subtle);
   padding: var(--sp-6) 0;
@@ -486,7 +487,10 @@ main.shell { flex: 1; }
   padding: var(--sp-7) 0 var(--sp-5);
   border-bottom: 1px solid var(--rule);
   margin-bottom: var(--sp-6);
+  display: grid;
+  grid-template-columns: 1fr minmax(0, var(--col-prose)) 1fr;
 }
+.post-header > * { grid-column: 2; }
 
 .post-header__kicker {
   font-family: var(--mono);
@@ -525,7 +529,8 @@ main.shell { flex: 1; }
 
 /* The Stamp — classified-document metadata block */
 .stamp {
-  margin: var(--sp-6) 0;
+  margin: var(--sp-6) auto;
+  max-width: var(--col-wide);
   border: 1px solid var(--rule);
   background: var(--bg);
   display: grid;
@@ -605,6 +610,7 @@ main.shell { flex: 1; }
 /* ———————————————— POST — BODY ———————————————— */
 .post-body {
   max-width: var(--col-prose);
+  margin-inline: auto;
   font-family: var(--body);
   font-variation-settings: "opsz" 18;
   font-size: var(--fs-base);
@@ -699,7 +705,8 @@ main.shell { flex: 1; }
 
 /* ———————————————— POST FOOTER ———————————————— */
 .post-foot {
-  margin-top: var(--sp-8);
+  margin: var(--sp-8) auto 0;
+  max-width: var(--col-wide);
   padding-top: var(--sp-4);
   border-top: 1px solid var(--rule);
   display: flex;
