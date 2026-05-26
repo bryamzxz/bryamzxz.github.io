@@ -128,7 +128,7 @@ From a wider set of candidate findings produced during the audit, three were sel
 
 **Class:** CWE-94 (Code Injection) + CWE-184 (Incomplete List of Disallowed Inputs)
 **Affected:** Dolibarr v22.0.0 – v22.0.4 and v24.0.0-alpha
-**GHSA:** [`GHSA-grw9-6m4w-mhcq`](https://github.com/Dolibarr/dolibarr/security/advisories/GHSA-grw9-6m4w-mhcq)
+**GHSA:** `GHSA-grw9-6m4w-mhcq` *(closed by upstream maintainer; mirror filing pending on reporter's fork)*
 
 #### Description
 
@@ -195,7 +195,7 @@ Remove the `dol_eval` block entirely from this code path. The `perms` attribute 
 
 **Class:** CWE-78 (OS Command Injection)
 **Affected:** Dolibarr v22.0.0 – v22.0.4 and v24.0.0-alpha
-**GHSA:** [`GHSA-c2jp-w9cj-6cx4`](https://github.com/Dolibarr/dolibarr/security/advisories/GHSA-c2jp-w9cj-6cx4)
+**GHSA:** `GHSA-c2jp-w9cj-6cx4` *(closed by upstream maintainer; mirror filing pending on reporter's fork)*
 
 #### Description
 
@@ -274,7 +274,7 @@ Implement a strict allowlist for `$this->methodename` when `jobtype == 'function
 
 **Class:** CWE-95 (Eval Injection)
 **Affected:** Dolibarr v22.0.0 – v22.0.4 and v24.0.0-alpha
-**GHSA:** [`GHSA-cq92-jp5j-rwvj`](https://github.com/Dolibarr/dolibarr/security/advisories/GHSA-cq92-jp5j-rwvj)
+**GHSA:** `GHSA-cq92-jp5j-rwvj` *(closed by upstream maintainer; mirror filing pending on reporter's fork)*
 
 #### Description
 
@@ -423,9 +423,9 @@ The OpenSSF Vulnerability Disclosures Working Group and other CVD-norm bodies ar
 
 ## 7. References
 
-- [GHSA-grw9-6m4w-mhcq](https://github.com/Dolibarr/dolibarr/security/advisories/GHSA-grw9-6m4w-mhcq) — CVE-2026-37711
-- [GHSA-c2jp-w9cj-6cx4](https://github.com/Dolibarr/dolibarr/security/advisories/GHSA-c2jp-w9cj-6cx4) — CVE-2026-37712
-- [GHSA-cq92-jp5j-rwvj](https://github.com/Dolibarr/dolibarr/security/advisories/GHSA-cq92-jp5j-rwvj) — CVE-2026-37713
+- `GHSA-grw9-6m4w-mhcq` — CVE-2026-37711 *(reporter-side mirror filing pending; upstream GHSA closed without technical refutation)*
+- `GHSA-c2jp-w9cj-6cx4` — CVE-2026-37712 *(reporter-side mirror filing pending; upstream GHSA closed without technical refutation)*
+- `GHSA-cq92-jp5j-rwvj` — CVE-2026-37713 *(reporter-side mirror filing pending; upstream GHSA closed without technical refutation)*
 - CVE-2025-56588 — 2025 `dol_eval` hardening: central `$forbiddenphpfunctions` blacklist expansion (commit `b03f30c7e`)
 - CVE-2026-22666 — Jiva Security, *Breaking the Eval Cage* (April 2026) — independent `dol_eval_standard()` whitelist-bypass analysis (CNA: VulnCheck; fixed in 23.0.2)
 - CVE-2025-67486 — Abduxalilov (April 2026) — independent extrafield `dol_eval()` injection; pins central `dol_eval_*` helpers with an active user-creation trigger. **Distinct from CVE-2026-37713**: that record pins four `commonobject.class.php` consumer sinks reached through a passive extrafield render. Listed for completeness; the two records cover non-overlapping reachability surfaces of the same dynamic-evaluation primitive.
