@@ -5,7 +5,7 @@ date: 2026-05-25 00:00:00 -0500
 categories: [disclosure]
 tags: [dolibarr, cve, rce, dol_eval, code-injection]
 author: "Bryam Vargas"
-description: "Three remote-code-execution CVEs in Dolibarr ERP/CRM rooted in dol_eval() and call_user_func_array(), and the five-year pattern of partial patches that left the primitive reachable."
+description: "Three high-severity code-execution CVEs in Dolibarr ERP/CRM — two remote code execution findings via dol_eval() and call_user_func_array(), plus an arbitrary-PHP-execution primitive (CWE-95) — and the five-year pattern of partial patches that left the eval() primitive reachable."
 cves:
   - CVE-2026-37711
   - CVE-2026-37712
