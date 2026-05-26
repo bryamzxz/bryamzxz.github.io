@@ -64,9 +64,9 @@ button { font: inherit; }
   --sp-9: 8rem;
 
   /* Layout columns */
-  --col-prose: 38rem;
-  --col-wide:  56rem;
-  --col-max:   72rem;
+  --col-prose: 46rem;
+  --col-wide:  62rem;
+  --col-max:   80rem;
 }
 
 /* Document */
@@ -669,13 +669,32 @@ main.shell { flex: 1; }
   font-size: var(--fs-sm);
 }
 
-/* Code in post body */
-.post-body pre {
-  margin-left: -1.5rem;
-  margin-right: -1.5rem;
+/* Code in post body — breakout pattern: code blocks and tables expand
+   beyond the prose column up to col-wide on desktop, so the design
+   keeps prose narrow for readability while letting wide content
+   (code, tables) use more screen real-estate on wide viewports. */
+.post-body pre,
+.post-body .highlight,
+.post-body table {
+  width: calc(100% + 6rem);
+  max-width: var(--col-wide);
+  margin-left: -3rem;
+}
+@media (max-width: 900px) {
+  .post-body pre,
+  .post-body .highlight,
+  .post-body table {
+    width: calc(100% + 3rem);
+    margin-left: -1.5rem;
+  }
 }
 @media (max-width: 600px) {
-  .post-body pre { margin-left: -1rem; margin-right: -1rem; }
+  .post-body pre,
+  .post-body .highlight,
+  .post-body table {
+    width: calc(100% + 2rem);
+    margin-left: -1rem;
+  }
 }
 
 /* ———————————————— POST FOOTER ———————————————— */
