@@ -453,6 +453,17 @@ While patches are pending:
 - Audit `llx_cronjob` rows where `jobtype = 'function'` for unexpected `methodename` values (e.g., `system`, `exec`, `passthru`, `shell_exec`).
 - Where feasible, run Apache as a non-`root` user. CVE-2026-37713 in particular escalates to system compromise when the web server runs as `root`.
 
+### 6.3 For the broader CVD process
+
+This disclosure passed through three layers of the CVE/CNA chain: the GitHub Security Advisory Database (declined assignment), the project's own GitHub Security Advisories (closed without technical refutation), and finally MITRE Primary (which assigned the CVE-IDs). This three-step path is unusually long for a coordinated disclosure of three independently reproducible findings, and it points to a gap in current CVD norms:
+
+- When a project maintainer is the only path to CNA assignment for their project, and the maintainer declines to engage technically, the researcher must escalate to TL-Root. This worked, but the path is not well-documented for new researchers and is not consistently applied across CNAs.
+- Methodology transparency (cf. §2.4) reduces, but does not eliminate, a maintainer's incentive to dismiss reports as low-quality. A standardized disclosure metadata format — audit trail, reproduction logs, lab parameters — would help.
+
+A further structural factor is common to single-maintainer open-source projects: the concentration of roles. When the same party holds sole code-merge authority, authors the `SECURITY.md` that defines which reports are treated as valid, and is the decision-maker on the project's security advisories, the coordinated-disclosure process has no external check — acknowledgement of a vulnerability depends entirely on the cooperation of one person, with no independent appeal path. This is a structural observation about governance, not a claim about any individual or project. It is most acute when a project also has commercial stakeholders, since reputational and commercial incentives then bear on the same role that gatekeeps report validity.
+
+The OpenSSF Vulnerability Disclosures Working Group and other CVD-norm bodies are well-placed to address these gaps — for example, by providing a researcher-initiated CNA escalation path that does not depend on maintainer cooperation.
+
 ---
 
 ## 7. References
