@@ -276,6 +276,25 @@ Implement a strict allowlist for `$this->methodename` when `jobtype == 'function
 **Affected:** Dolibarr v22.0.0 – v22.0.4 and v24.0.0-alpha
 **GHSA:** `GHSA-cq92-jp5j-rwvj` *(closed by upstream maintainer; mirror filing pending on reporter's fork)*
 
+> **Notice — proof under revision (added 2026-05-25, post-publication).**
+> A post-publication review of this section identified issues with the
+> demonstration material as presented below. Specifically: (a) the
+> proof-of-concept output (`uid=0(root)…`) was produced by a CLI simulation
+> of `eval()` outside the `dol_eval()` filter pipeline, not from the
+> documented HTTP trigger — the literal payload `system("id")` is blocked
+> by `dol_eval_standard()`'s blacklist (which lists `system` explicitly);
+> and (b) the affected-version line overclaims for `v24.0.0-alpha`, which
+> in default installs runs the post-CVE-2026-22666 whitelist and is **not**
+> reachable without an explicit operator override of
+> `$dolibarr_main_restrict_eval_methods`. A revised proof using a
+> filter-passing payload (`header()`-based primitive demonstration on
+> Dolibarr v22.0.4) plus a corrected per-branch affected-versions table
+> will replace the material below. The underlying finding — arbitrary PHP
+> code execution from stored `llx_extrafields.fieldcomputed` via
+> `dol_eval()` (CWE-95) — remains valid. This revision is scoped strictly
+> to §3.3; CVE-2026-37711 (§3.1) and CVE-2026-37712 (§3.2) are not
+> affected.
+
 #### Description
 
 Dolibarr evaluates the `fieldcomputed` property of extrafields using `dol_eval()` with `onlysimplestring='2'` (permissive mode) on **every object fetch, insert, update, and display**. An administrator can inject a PHP expression into `llx_extrafields.fieldcomputed`. When `$dolibarr_main_restrict_eval_methods` is set to `''` in `conf.php` — a documented configuration mode — the sanitization relies on a keyword blacklist that can be bypassed using Dolibarr's own whitelisted helper functions.
