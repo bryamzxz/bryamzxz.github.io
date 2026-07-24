@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The topbar brand mark: a red solidus stamped on a framed sheet of paper.
+     Adapts to the browser's colour scheme; favicon-32.png is the static
+     light-mode fallback for browsers without SVG icon support. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <style>
+    .paper { fill: #f5efe1; }
+    .ink   { stroke: #0d0c0a; }
+    @media (prefers-color-scheme: dark) {
+      .paper { fill: #14120e; }
+      .ink   { stroke: #6b6353; }
+    }
+  </style>
+  <rect class="paper" width="32" height="32"/>
+  <rect class="ink" x="1.5" y="1.5" width="29" height="29" fill="none" stroke-width="2"/>
+  <path d="M20.5 6.5 L11.5 25.5" stroke="#b3151a" stroke-width="5" stroke-linecap="butt"/>
+</svg>

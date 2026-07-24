@@ -1,0 +1,35 @@
+<footer class="footer">
+  <div class="shell">
+    <div class="footer__inner">
+      <div class="footer__col">
+        <h4>Filed by</h4>
+        <p>
+          {{ site.author | default: 'Bryam Vargas' }}<br>
+          Bogotá · Colombia<br>
+          Independent security research
+        </p>
+      </div>
+      <div class="footer__col">
+        <h4>Contact</h4>
+        <p>
+          <a href="mailto:{{ site.email }}">{{ site.email }}</a><br>
+          PGP key on request<br>
+          Signal available
+        </p>
+      </div>
+      <div class="footer__col">
+        <h4>Index</h4>
+        <ul>
+          <li><a href="{{ '/' | relative_url }}">disclosures</a></li>
+          <li><a href="{{ '/about/' | relative_url }}">about &amp; policy</a></li>
+          <li><a href="https://github.com/bryamzxz" rel="me noopener">github.com/bryamzxz</a></li>
+          <li><a href="{{ '/feed.xml' | relative_url }}">atom feed</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__colophon">
+      <span>© {{ 'now' | date: '%Y' }} Bryam Vargas — all research published independently</span>
+      <span>Set in Fraunces, Newsreader &amp; JetBrains Mono</span>
+    </div>
+  </div>
+</footer>

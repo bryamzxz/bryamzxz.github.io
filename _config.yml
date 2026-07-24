@@ -8,23 +8,42 @@ description: >-
 url: "https://bryamzxz.github.io"
 baseurl: ""
 lang: en
+timezone: America/Bogota
 
 # Build
-theme: minima
 markdown: kramdown
 highlighter: rouge
 permalink: /:year/:month/:day/:title/
 
+# Structured data (jekyll-seo-tag)
+social:
+  name: Bryam Vargas
+  links:
+    - https://github.com/bryamzxz
+
 # Jekyll defaults
 defaults:
+  # jekyll-seo-tag only reads `image` per page, never site-wide, so the social
+  # card has to be applied as a default. Pages may override it individually.
+  - scope:
+      path: ""
+    values:
+      image: /assets/img/og.png
   - scope:
       path: ""
       type: posts
     values:
       layout: post
 
-# Rouge syntax highlighter
+# Kramdown — mirrors the config GitHub Pages applies at build time,
+# so a local `bundle exec jekyll serve` renders identically to production.
 kramdown:
+  input: GFM
+  hard_wrap: false
+  auto_ids: true
+  toc_levels: 1..6
+  entity_output: as_char
+  smart_quotes: lsquo,rsquo,ldquo,rdquo
   syntax_highlighter: rouge
   syntax_highlighter_opts:
     css_class: 'highlight'
@@ -43,3 +62,4 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - vendor/
+  - script/
