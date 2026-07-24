@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Source for og.png (1200×630 social card). Regenerate with:
+    rsvg-convert -w 1200 -h 630 assets/img/og.svg -o assets/img/og.png
+  Requires Fraunces and JetBrains Mono to be installed locally; the rendered
+  PNG is what ships, so this file is documentation, not a runtime asset.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f5efe1"/>
+
+  <rect x="36" y="36" width="1128" height="558" fill="none" stroke="#0d0c0a" stroke-width="2"/>
+  <rect x="47" y="47" width="1106" height="536" fill="none" stroke="#b8ad97" stroke-width="1"/>
+
+  <line x1="88" y1="146" x2="132" y2="146" stroke="#b3151a" stroke-width="3"/>
+  <text x="150" y="153" font-family="JetBrains Mono" font-weight="500" font-size="20"
+        letter-spacing="4" fill="#5a544a">INDEPENDENT SECURITY RESEARCH · BOGOTÁ</text>
+
+  <text x="88" y="330" font-family="Fraunces 144pt" font-weight="400" font-size="146"
+        letter-spacing="-4" fill="#0d0c0a"><tspan fill="#b3151a">/</tspan>bryamzxz<tspan fill="#b3151a">.</tspan></text>
+
+  <text x="88" y="418" font-family="Fraunces 144pt" font-style="italic" font-size="42"
+        fill="#5a544a">Coordinated disclosure, CVE research,</text>
+  <text x="88" y="470" font-family="Fraunces 144pt" font-style="italic" font-size="42"
+        fill="#5a544a">and civic-tech forensics.</text>
+
+  <line x1="88" y1="524" x2="1112" y2="524" stroke="#0d0c0a" stroke-width="1"/>
+
+  <text x="88" y="562" font-family="JetBrains Mono" font-weight="700" font-size="19"
+        letter-spacing="3.4" fill="#0d0c0a">BRYAMZXZ.GITHUB.IO</text>
+  <text x="1112" y="562" text-anchor="end" font-family="JetBrains Mono" font-weight="500" font-size="19"
+        letter-spacing="3.4" fill="#5a544a">SOURCE-FIRST · LAB-REPRODUCED</text>
+</svg>
