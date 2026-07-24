@@ -1,0 +1,15 @@
+---
+layout: default
+---
+
+<article class="page">
+  <header class="page-header">
+    {%- if page.kicker -%}<p class="page-header__kicker">{{ page.kicker }}</p>{%- endif -%}
+    <h1 class="page-header__title">{{ page.title | escape }}</h1>
+    {%- if page.subtitle -%}<p class="page-header__lede">{{ page.subtitle }}</p>{%- endif -%}
+  </header>
+
+  <div class="page-body prose">
+    {{ content }}
+  </div>
+</article>

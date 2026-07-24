@@ -1,73 +1,33 @@
 <!DOCTYPE html>
 <html lang="{{ site.lang | default: 'en' }}">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  {%- seo -%}
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400;1,9..144,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@400;500;700&display=swap">
-
-  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
-  <link rel="alternate" type="application/atom+xml" title="{{ site.title | escape }}" href="{{ '/feed.xml' | relative_url }}">
-
-  <meta name="theme-color" content="#f5efe1">
-</head>
+{%- include head.html -%}
 <body>
+
+<a class="skip-link" href="#content">Skip to content</a>
 
 <header class="topbar">
   <div class="shell topbar__inner">
     <a class="topbar__brand" href="{{ '/' | relative_url }}">bryamzxz</a>
-    <nav class="topbar__nav" aria-label="External">
+    <nav class="topbar__nav" aria-label="Site">
+      <a href="{{ '/about/' | relative_url }}"{% if page.url == '/about/' %} aria-current="page"{% endif %}>about</a>
       <a href="https://github.com/bryamzxz" rel="me noopener">github</a>
       <a href="{{ '/feed.xml' | relative_url }}" rel="alternate">rss</a>
+      <button type="button" class="topbar__theme" data-theme-toggle hidden>
+        <span class="topbar__theme-label" data-theme-label>auto</span>
+      </button>
     </nav>
   </div>
+  {%- if page.layout == 'post' -%}
+  <div class="readbar" data-readbar aria-hidden="true"><i data-readbar-fill></i></div>
+  {%- endif -%}
 </header>
 
-<main class="shell">
+<main class="shell" id="content" tabindex="-1">
   {{ content }}
 </main>
 
-<footer class="footer">
-  <div class="shell">
-    <div class="footer__inner">
-      <div class="footer__col">
-        <h4>Filed by</h4>
-        <p>
-          {{ site.author | default: 'Bryam Vargas' }}<br>
-          Bogotá · Colombia<br>
-          Independent security research
-        </p>
-      </div>
-      <div class="footer__col">
-        <h4>Contact</h4>
-        <p>
-          <a href="mailto:{{ site.email }}">{{ site.email }}</a><br>
-          PGP key on request<br>
-          Signal available
-        </p>
-      </div>
-      <div class="footer__col">
-        <h4>Index</h4>
-        <ul>
-          <li><a href="https://github.com/bryamzxz" rel="me noopener">github.com/bryamzxz</a></li>
-          <li><a href="{{ '/feed.xml' | relative_url }}">atom feed</a></li>
-          <li><a href="{{ '/' | relative_url }}">disclosures</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer__colophon">
-      <span>© {{ 'now' | date: '%Y' }} Bryam Vargas — all research published independently</span>
-      <span>Set in Fraunces, Newsreader &amp; JetBrains Mono</span>
-    </div>
-  </div>
-</footer>
+{%- include footer.html -%}
 
+<script src="{{ '/assets/js/site.js' | relative_url }}" defer></script>
 </body>
 </html>

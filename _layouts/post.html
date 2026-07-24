@@ -2,11 +2,22 @@
 layout: default
 ---
 
+{%- assign words = content | strip_html | number_of_words -%}
+{%- assign minutes = words | divided_by: 200 -%}
+{%- if minutes < 1 -%}{%- assign minutes = 1 -%}{%- endif -%}
+{%- assign kilo = words | divided_by: 1000 -%}
+{%- assign rest = words | modulo: 1000 | prepend: '00' | slice: -3, 3 -%}
+
 <article class="post">
 
   <header class="post-header">
     <p class="post-header__kicker">{% if page.categories %}{{ page.categories | first | upcase }}{% else %}DISCLOSURE{% endif %} · {{ page.date | date: '%Y-%m-%d' }}</p>
     <h1 class="post-header__title">{{ page.title | escape }}</h1>
+    <p class="post-header__meta">
+      <span>{{ minutes }} min read</span>
+      <span>{% if kilo > 0 %}{{ kilo }},{{ rest }}{% else %}{{ words }}{% endif %} words</span>
+      {%- if page.cves -%}<span>{{ page.cves | size }} CVE{% if page.cves.size != 1 %}s{% endif %}</span>{%- endif -%}
+    </p>
   </header>
 
   <section class="stamp" aria-label="Disclosure dossier">
@@ -22,7 +33,9 @@ layout: default
     <div class="stamp__label">CVE IDs</div>
     <div class="stamp__value">
       <ul>
-        {%- for cve in page.cves -%}<li>{{ cve }}</li>{%- endfor -%}
+        {%- for cve in page.cves -%}
+          <li><a href="https://www.cve.org/CVERecord?id={{ cve }}" rel="noopener">{{ cve }}</a></li>
+        {%- endfor -%}
       </ul>
     </div>
     {%- endif -%}
@@ -60,9 +73,40 @@ layout: default
     {%- endif -%}
   </section>
 
-  <div class="post-body prose">
+  {%- comment -%}
+    Populated by assets/js/site.js from the headings kramdown already gave IDs
+    to. Ships hidden so a JS-less reader never sees an empty shell.
+  {%- endcomment -%}
+  <details class="post-toc" data-toc hidden>
+    <summary class="post-toc__summary">Contents</summary>
+    <nav class="post-toc__body" data-toc-body aria-label="Table of contents"></nav>
+  </details>
+
+  <div class="post-body prose" data-post-body>
     {{ content }}
   </div>
+
+  <section class="post-cite" aria-label="Citation">
+    <h2 class="post-cite__head">Cite this disclosure</h2>
+    <p class="post-cite__ref">{{ page.author | default: site.author }}. “{{ page.title | escape }}.” <em>{{ site.title }}</em>, {{ page.date | date: '%-d %B %Y' }}. {{ page.url | absolute_url }}</p>
+  </section>
+
+  {%- if page.previous or page.next -%}
+  <nav class="post-nav" aria-label="More disclosures">
+    {%- if page.next -%}
+    <a class="post-nav__link post-nav__link--next" href="{{ page.next.url | relative_url }}">
+      <span class="post-nav__dir">Newer</span>
+      <span class="post-nav__title">{{ page.next.title | escape }}</span>
+    </a>
+    {%- endif -%}
+    {%- if page.previous -%}
+    <a class="post-nav__link post-nav__link--prev" href="{{ page.previous.url | relative_url }}">
+      <span class="post-nav__dir">Older</span>
+      <span class="post-nav__title">{{ page.previous.title | escape }}</span>
+    </a>
+    {%- endif -%}
+  </nav>
+  {%- endif -%}
 
   <footer class="post-foot">
     <span>Filed by {{ page.author | default: site.author }} · Bogotá</span>

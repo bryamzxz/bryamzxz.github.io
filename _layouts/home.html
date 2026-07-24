@@ -13,7 +13,7 @@ layout: default
     {%- assign oldest = site.posts.last -%}
     <span>{{ total }} {% if total == 1 %}disclosure on record{% else %}disclosures on record{% endif %}</span>
     {%- if oldest -%}<span>Since {{ oldest.date | date: '%Y' }}</span>{%- endif -%}
-    <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+    <a href="{{ '/about/' | relative_url }}">about &amp; disclosure policy</a>
   </div>
 </section>
 
@@ -55,3 +55,49 @@ layout: default
     </li>
   {%- endfor -%}
 </ol>
+
+{%- assign ledger = site.posts | where_exp: "p", "p.cves" -%}
+{%- if ledger.size > 0 -%}
+<div class="section-bar">
+  <h2>CVE ledger</h2>
+  <span class="section-bar__aside">every identifier assigned to this research</span>
+</div>
+
+<div class="ledger-wrap">
+  <table class="ledger">
+    <thead>
+      <tr>
+        <th scope="col">Identifier</th>
+        <th scope="col">CVSS 3.1</th>
+        <th scope="col">Class</th>
+        <th scope="col">Disclosure</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%- for p in ledger -%}
+        {%- for cve in p.cves -%}
+          {%- assign i = forloop.index0 -%}
+          {%- assign score = p.cvss | slice: i, 1 | first -%}
+          {%- assign weakness = p.cwe | slice: i, 1 | first -%}
+          <tr>
+            <td class="ledger__id"><a href="https://www.cve.org/CVERecord?id={{ cve }}" rel="noopener">{{ cve }}</a></td>
+            <td>
+              {%- if score -%}
+                {%- assign sev_class = 'sev' -%}
+                {%- if score >= 9.0 -%}{%- assign sev_class = 'sev sev--critical' -%}
+                {%- elsif score >= 7.0 -%}{%- assign sev_class = 'sev sev--high' -%}
+                {%- elsif score >= 4.0 -%}{%- assign sev_class = 'sev sev--medium' -%}
+                {%- else -%}{%- assign sev_class = 'sev sev--low' -%}
+                {%- endif -%}
+                <span class="{{ sev_class }}">{{ score }}</span>
+              {%- else -%}—{%- endif -%}
+            </td>
+            <td>{{ weakness | default: '—' }}</td>
+            <td><a href="{{ p.url | relative_url }}">{{ p.title | escape }}</a></td>
+          </tr>
+        {%- endfor -%}
+      {%- endfor -%}
+    </tbody>
+  </table>
+</div>
+{%- endif -%}
