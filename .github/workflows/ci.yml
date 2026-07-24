@@ -1,0 +1,38 @@
+name: CI
+
+# Validation only. GitHub Pages builds and deploys this site itself from the
+# `main` branch (legacy build type) — nothing here publishes anything.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+
+      - name: Check JavaScript syntax
+        run: node --check assets/js/site.js
+
+      - name: Build site
+        run: bundle exec jekyll build --trace
+        env:
+          JEKYLL_ENV: production
+
+      - name: Validate HTML and internal links
+        run: bundle exec ruby script/proof.rb
+
+      - name: Assert site invariants
+        run: bundle exec ruby script/assert_invariants.rb
